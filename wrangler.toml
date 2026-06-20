@@ -1,4 +1,15 @@
-name = "my-blog"
-pages_build_output_dir = ".open-next"
+name = "xhblogs2"
+main = ".open-next/worker.js"
 compatibility_date = "2026-06-20"
-compatibility_flags = ["nodejs_compat"]
+compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
+
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
+
+[[services]]
+binding = "WORKER_SELF_REFERENCE"
+service = "xhblogs2"
+
+[images]
+binding = "IMAGES"
