@@ -1,0 +1,4 @@
+name = "my-blog"
+pages_build_output_dir = ".open-next"
+compatibility_date = "2026-06-20"
+compatibility_flags = ["nodejs_compat"]
