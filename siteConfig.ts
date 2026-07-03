@@ -5,7 +5,7 @@ export const siteConfig = {
   title: "ShuRuMingZi の 宝藏之地",
   faviconUrl: "https://static.deepseek.com/user-avatar/ne-6Pr4NCgc1rg8IQosHOWRv",
   authorName: "ShuRuMingZi",
-  bio: "在代码、学术间穿梭的普通人。近期正埋头于服务器域名映射。",
+  bio: "在代码、学术间穿梭的普通人。近期正在期末复习\n能不能祝我考试顺利",
 
   navTitle: "ShuRuMingZi",
 
