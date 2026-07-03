@@ -1,7 +1,5 @@
-import fs from 'fs';
-import path from 'path';
-import matter from 'gray-matter';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
@@ -18,6 +16,7 @@ import 'highlight.js/styles/atom-one-dark.css';
 import Navbar from '../../../components/Navbar';
 import PageTransition from '../../../components/PageTransition';
 import { siteConfig } from '../../../siteConfig';
+import { postsData } from '../../../data/content-data';
 import ClientSocials from '../../../components/ClientSocials';
 import ClientTOC from '../../../components/ClientTOC';
 import BackButton from '../../../components/BackButton';
@@ -25,16 +24,7 @@ import Comments from '../../../components/Comments';
 import SidebarLyric from '../../../components/SidebarLyric';
 
 export async function generateStaticParams() {
-  const postsDirectory = path.join(process.cwd(), 'posts');
-  if (!fs.existsSync(postsDirectory)) return [];
-
-  const filenames = fs.readdirSync(postsDirectory);
-
-  return filenames
-    .filter((name) => name.endsWith('.md'))
-    .map((name) => ({
-      slug: name.replace(/\.md$/, ''),
-    }));
+  return postsData.map(p => ({ slug: p.slug }));
 }
 
 function extractToc(content: string) {
@@ -52,9 +42,9 @@ function extractToc(content: string) {
 }
 
 async function getPostData(slug: string) {
-  const fullPath = path.join(process.cwd(), 'posts', `${slug}.md`);
-  const fileContents = fs.readFileSync(fullPath, 'utf8');
-  let { data, content } = matter(fileContents);
+  const entry = postsData.find(p => p.slug === slug);
+  if (!entry) return null;
+  let content = entry.content || '';
 
   // ==========================================
   // 🌟 前台渲染清洗区：终极防吞换行补丁！
@@ -104,29 +94,24 @@ async function getPostData(slug: string) {
     slug,
     contentHtml: processedContent.toString(),
     toc: extractToc(content),
-    title: data.title,
-    date: data.date,
-    tags: data.tags && Array.isArray(data.tags) ? data.tags : [],
-    cover: data.cover || siteConfig.defaultPostCover
+    title: entry.title,
+    date: entry.date,
+    tags: entry.tags && Array.isArray(entry.tags) ? entry.tags : [],
+    cover: entry.cover || siteConfig.defaultPostCover
   };
 }
 
 function getRecentPosts(currentSlug: string) {
-  const postsDirectory = path.join(process.cwd(), 'posts');
-  let fileNames: string[] = [];
-  try { fileNames = fs.readdirSync(postsDirectory).filter(f => f.endsWith('.md')); } catch(e) {}
-  if (!fileNames) return [];
-  return fileNames.map(f => {
-    const s = f.replace(/\.md$/, '');
-    const c = fs.readFileSync(path.join(postsDirectory, f), 'utf8');
-    const { data } = matter(c);
-    return { slug: s, title: data.title || '无标题', date: data.date };
-  }).filter(p => p.slug !== currentSlug).slice(0, 3);
+  return postsData
+    .filter(p => p.slug !== currentSlug)
+    .map(p => ({ slug: p.slug, title: p.title || '无标题', date: p.date }))
+    .slice(0, 3);
 }
 
 export default async function Post({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
   const postData = await getPostData(resolvedParams.slug);
+  if (!postData) notFound();
   const recentPosts = getRecentPosts(resolvedParams.slug);
 
   return (

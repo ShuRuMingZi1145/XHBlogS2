@@ -1,7 +1,5 @@
-import fs from 'fs';
-import path from 'path';
-import matter from 'gray-matter';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
 // 🌟 核心升级：引入 Next.js 现代统一解析流
 import { unified } from 'unified';
@@ -19,27 +17,21 @@ import 'highlight.js/styles/atom-one-dark.css';
 import Navbar from '../../../components/Navbar';
 import PageTransition from '../../../components/PageTransition';
 import { siteConfig } from '../../../siteConfig';
+import { chattersData } from '../../../data/content-data';
 import ClientSocials from '../../../components/ClientSocials';
 import SidebarLyric from '../../../components/SidebarLyric';
 import BackButton from '../../../components/BackButton';
 import Comments from '../../../components/Comments';
 
 export async function generateStaticParams() {
-  const chattersDirectory = path.join(process.cwd(), 'chatters');
-  if (!fs.existsSync(chattersDirectory)) return [];
-  const filenames = fs.readdirSync(chattersDirectory);
-  return filenames
-    .filter((name) => name.endsWith('.md'))
-    .map((name) => ({
-      slug: name.replace(/\.md$/, ''),
-    }));
+  return chattersData.map(c => ({ slug: c.slug }));
 }
 
 async function getChatterData(slug: string) {
-  const fullPath = path.join(process.cwd(), 'chatters', `${slug}.md`);
-  const fileContents = fs.readFileSync(fullPath, 'utf8');
+  const entry = chattersData.find(c => c.slug === slug);
+  if (!entry) return null;
 
-  let { data, content } = matter(fileContents);
+  let content = entry.content || '';
 
   // ==========================================
   // 🌟 前台渲染清洗区：终极防吞换行 + 安全保护补丁！（从 Post 完美移植）
@@ -93,26 +85,18 @@ async function getChatterData(slug: string) {
   return {
     slug,
     contentHtml: processedContent.toString(),
-    title: data.title || '碎片记录',
-    date: data.date,
-    mood: data.mood,
-    tags: data.tags && Array.isArray(data.tags) ? data.tags : [],
-    cover: data.cover || siteConfig.defaultPostCover
+    title: entry.title || '碎片记录',
+    date: entry.date,
+    mood: entry.mood,
+    tags: entry.tags && Array.isArray(entry.tags) ? entry.tags : [],
+    cover: entry.cover || siteConfig.defaultPostCover
   };
 }
 
 function getRecentChatters(currentSlug: string) {
-  const chattersDirectory = path.join(process.cwd(), 'chatters');
-  let fileNames: string[] = [];
-  try { fileNames = fs.readdirSync(chattersDirectory).filter(f => f.endsWith('.md')); } catch(e) {}
-  if (!fileNames) return [];
-
-  return fileNames.map(f => {
-    const s = f.replace(/\.md$/, '');
-    const c = fs.readFileSync(path.join(chattersDirectory, f), 'utf8');
-    const { data } = matter(c);
-    return { slug: s, title: data.title || '碎片记录', date: data.date || '1970-01-01' };
-  }).filter(p => p.slug !== currentSlug)
+  return chattersData
+    .filter(c => c.slug !== currentSlug)
+    .map(c => ({ slug: c.slug, title: c.title || '碎片记录', date: c.date || '1970-01-01' }))
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 3);
 }
@@ -130,6 +114,7 @@ function generateCalendarMatrix(year: number, month: number, targetDay: number) 
 export default async function ChatterDetail({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
   const chatterData = await getChatterData(resolvedParams.slug);
+  if (!chatterData) notFound();
   const recentChatters = getRecentChatters(resolvedParams.slug);
 
   const dateObj = new Date(chatterData.date || '2026-03-24');
