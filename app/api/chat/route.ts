@@ -9,17 +9,18 @@ export async function POST(req: Request) {
   try {
     const { message } = await req.json();
 
-    // 🌟 纯粹靠环境变量读取 API Key
-    const apiKey = (process.env.GEMINI_API_KEY || process.env.OPENAI_API_KEY || '').trim();
+    // 🌟 优先读取 siteConfig 中的 apiKey，再 fallback 到环境变量
+    const apiKey = (siteConfig.geminiConfig.apiKey || process.env.GEMINI_API_KEY || process.env.OPENAI_API_KEY || '').trim();
 
     if (!apiKey) {
       console.error("❌ 找不到 API Key");
       return new Response(JSON.stringify({ error: "Key missing" }), { status: 500 });
     }
 
-    // 调用 siteConfig 的参数
+    // 调用 siteConfig 的参数（支持自定义 API URL）
     const modelId = siteConfig.geminiConfig.modelId;
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${apiKey}`;
+    const baseUrl = (siteConfig.geminiConfig.apiUrl || 'https://generativelanguage.googleapis.com').replace(/\/+$/, '');
+    const url = `${baseUrl}/v1beta/models/${modelId}:generateContent?key=${apiKey}`;
 
     console.log(`📡 [2/5] 正在呼叫模型: ${modelId}`);
 
