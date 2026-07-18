@@ -1,16 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
-import { unified } from 'unified';
-import remarkParse from 'remark-parse';
-import remarkGfm from 'remark-gfm'; // 🌟 核心引入：支持删除线和表格等 GFM 语法
-import remarkRehype from 'remark-rehype';
-import rehypeHighlight from 'rehype-highlight';
-import rehypeStringify from 'rehype-stringify';
-import remarkMath from 'remark-math';
-import rehypeKatex from 'rehype-katex';
-
-// 引入高亮主题
 import 'highlight.js/styles/atom-one-dark.css';
 
 import Navbar from '../../../components/Navbar';
@@ -41,61 +31,15 @@ function extractToc(content: string) {
   return toc;
 }
 
-async function getPostData(slug: string) {
+function getPostData(slug: string) {
   const entry = postsData.find(p => p.slug === slug);
   if (!entry) return null;
-  let content = entry.content || '';
-
-  // ==========================================
-  // 🌟 前台渲染清洗区：终极防吞换行补丁！
-  // ==========================================
-
-  // 1. 强行修复数字列表缺少空格导致无法渲染为列表的 Bug (1.百度 -> 1. 百度)
-  content = content.replace(/^(\s*\d+)\.([^ \n])/gm, '$1. $2');
-
-  // 2. 🌟 拯救被 Markdown 引擎吞噬的“连续空行”！
-  // 统一换行符，并清理纯空格的废弃空行
-  content = content.replace(/\r\n/g, '\n').replace(/^[ \t]+$/gm, '');
-
-  // 将代码块切开保护，只处理正文的连续空行！
-  const blocks = content.split(/(```[\s\S]*?```)/g);
-  content = blocks.map((block, index) => {
-    // 奇数索引是代码块，原样返回，绝对不碰！
-    if (index % 2 === 1) return block;
-
-    // 偶数索引是正文。把 3 个以上的连续 \n 替换为真实的 <br/> 标签。
-    // （3 个 \n 相当于中间空了 1 行真正的空白）
-    return block.replace(/\n{3,}/g, (match) => {
-      const brCount = match.length - 2;
-      return '\n\n' + '<br/>'.repeat(brCount) + '\n\n';
-    });
-  }).join('');
-
-  // ==========================================
-
-  const processedContent = await unified()
-    .use(remarkParse)
-    .use(remarkGfm)
-    .use(remarkMath)
-    // 🌟 allowDangerousHtml 必须开启，这样上面生成的 <br/> 才能顺利通过变成真正的换行！
-    .use(remarkRehype, { allowDangerousHtml: true })
-    // 🌟 核心升级：开启代码语言自动侦测，并限制白名单，大幅提高 C++ 和常用语言的猜中率！
-    // @ts-ignore
-    .use(rehypeHighlight, {
-      detect: true,
-      ignoreMissing: true,
-      subset: ['cpp', 'c', 'python', 'java', 'javascript', 'typescript', 'go', 'rust', 'bash', 'json', 'html', 'css', 'sql', 'xml']
-    })
-    .use(rehypeKatex)
-    .use(rehypeStringify, { allowDangerousHtml: true })
-    .process(content);
-
   return {
     slug,
-    contentHtml: processedContent.toString(),
-    toc: extractToc(content),
-    title: entry.title,
-    date: entry.date,
+    contentHtml: entry.contentHtml || '',
+    toc: extractToc(entry.content || ''),
+    title: entry.title || '',
+    date: entry.date || '',
     tags: entry.tags && Array.isArray(entry.tags) ? entry.tags : [],
     cover: entry.cover || siteConfig.defaultPostCover
   };
@@ -110,7 +54,7 @@ function getRecentPosts(currentSlug: string) {
 
 export default async function Post({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
-  const postData = await getPostData(resolvedParams.slug);
+  const postData = getPostData(resolvedParams.slug);
   if (!postData) notFound();
   const recentPosts = getRecentPosts(resolvedParams.slug);
 
