@@ -130,7 +130,7 @@ export default async function ChatterDetail({ params }: { params: Promise<{ slug
       <Navbar />
 
       <PageTransition>
-        <main className="w-[95%] md:w-[90%] max-w-6xl mx-auto mt-24 md:mt-28 flex flex-col lg:flex-row gap-6 md:gap-8 relative z-10">
+        <main className="w-[95%] md:w-[90%] lg:max-w-[90%] xl:max-w-7xl mx-auto mt-24 md:mt-28 flex flex-col lg:flex-row gap-6 md:gap-8 relative z-10">
 
           <article className="flex-1 bg-white/60 dark:bg-slate-800/50 backdrop-blur-xl rounded-[40px] shadow-2xl border border-white/40 dark:border-white/10 overflow-hidden transition-colors duration-700">
             {chatterData.cover && (
@@ -139,7 +139,7 @@ export default async function ChatterDetail({ params }: { params: Promise<{ slug
               </div>
             )}
 
-            <div className="p-5 md:p-14 relative">
+            <div className="p-5 md:px-14 md:py-14 lg:pl-4 lg:pr-8 lg:py-14 relative">
               <BackButton />
 
               <header className="mb-6 md:mb-10 border-b border-slate-300/30 dark:border-slate-700/50 pb-5 md:pb-8 relative">
