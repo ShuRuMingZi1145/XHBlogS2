@@ -38,6 +38,7 @@ export default function Home() {
     title: p.title || '',
     description: p.description || '',
     content: p.content || '',
+    cover: p.cover || siteConfig.defaultPostCover,
     date: p.date || '1970-01-01',
     formattedDate: formatUpdateTime(p.date || '1970-01-01'),
   })).sort((a, b) => {
