@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useOperations } from '../context/OperationContext';
 import { useToast } from './ToastProvider';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Menu, X } from 'lucide-react';
 import { siteConfig } from '../siteConfig';
 
 export default function Navbar() {
@@ -14,6 +14,7 @@ export default function Navbar() {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isOpBoxOpen, setIsOpBoxOpen] = useState(false);
 
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [syncModalOpen, setSyncModalOpen] = useState(false);
   const [targetBlogPath, setTargetBlogPath] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
@@ -71,20 +72,17 @@ export default function Navbar() {
     { name: '⚙️ 设置', href: '/settings' },
   ];
 
+  const inPywebview = typeof window !== 'undefined' && !!(window as any).pywebview?.api;
   const handleMinimize = () => {
-    if (typeof window !== 'undefined' && (window as any).pywebview?.api) {
-      (window as any).pywebview.api.minimize_window();
-    }
+    if (inPywebview) (window as any).pywebview.api.minimize_window();
   };
   const handleMaximize = () => {
-    if (typeof window !== 'undefined' && (window as any).pywebview?.api) {
-      (window as any).pywebview.api.maximize_window();
-    }
+    if (inPywebview) (window as any).pywebview.api.toggle_fullscreen();
+    else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
   };
   const handleClose = () => {
-    if (typeof window !== 'undefined' && (window as any).pywebview?.api) {
-      (window as any).pywebview.api.close_window();
-    }
+    if (inPywebview) (window as any).pywebview.api.close_window();
+    else window.close();
   };
 
   // 🌟 监控增强版更新逻辑
@@ -223,14 +221,18 @@ export default function Navbar() {
             {siteConfig.navAfter}
           </Link>
 
-          <div className="flex items-center gap-6" style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}>
-            <nav className="hidden lg:flex gap-8 text-sm font-bold">
+          <div className="flex items-center gap-2 sm:gap-6" style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}>
+            <nav className="hidden lg:flex gap-1 xl:gap-3 2xl:gap-6 text-sm font-bold whitespace-nowrap overflow-x-auto">
               {navLinks.map((link) => (
-                <Link key={link.href} href={link.href} className={`relative py-1 transition-colors ${pathname === link.href ? 'text-indigo-600' : 'text-slate-700 dark:text-slate-200'}`}>
+                <Link key={link.href} href={link.href} className={`relative py-1 px-1.5 shrink-0 transition-colors ${pathname === link.href ? 'text-indigo-600' : 'text-slate-700 dark:text-slate-200'}`}>
                   {link.name}
                 </Link>
               ))}
             </nav>
+
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden w-9 h-9 rounded-xl bg-white/50 dark:bg-slate-800/50 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:scale-105 transition-all border border-white/20 shadow-sm cursor-pointer">
+              {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
 
             <div className="relative">
               <button onClick={() => setIsOpBoxOpen(!isOpBoxOpen)} className="relative w-10 h-10 rounded-xl bg-white/50 dark:bg-slate-800/50 flex items-center justify-center text-lg hover:scale-105 transition-all border border-white/20 shadow-sm cursor-pointer">
@@ -297,6 +299,21 @@ export default function Navbar() {
           </div>
         </div>
       </header>
+
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="fixed top-16 left-0 right-0 z-[99] bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border-b border-slate-200 dark:border-slate-700 shadow-xl lg:hidden">
+            <nav className="flex flex-col p-4 gap-1 max-h-[70vh] overflow-y-auto">
+              {navLinks.map((link) => (
+                <Link key={link.href} href={link.href} onClick={() => setMobileMenuOpen(false)}
+                  className={`px-4 py-3 rounded-xl text-sm font-bold transition-colors ${pathname === link.href ? 'bg-indigo-500/10 text-indigo-600' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
+                  {link.name}
+                </Link>
+              ))}
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {syncModalOpen && (
