@@ -17,12 +17,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
 
       - name: Install dependencies
         run: npm ci
+        working-directory: ./XHBlogs
 
       - name: Build & Deploy with OpenNext
         run: npm run deploy
+        working-directory: ./XHBlogs
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
