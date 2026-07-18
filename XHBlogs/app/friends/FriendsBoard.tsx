@@ -5,7 +5,8 @@ import { motion } from 'framer-motion';
 import BackButton from '../../components/BackButton';
 import { friendsData } from '../../data/friends';
 import Comments from '../../components/Comments'; // 🌟 引入你的 Gitalk 组件
-import { siteConfig } from '../../siteConfig'; // 🌟 引入刚刚更新的全局配置文件
+import { siteConfig } from '../../siteConfig';
+import { normalizeUrl } from '../../lib/url';
 
 // Framer Motion 动画变体：交错子元素
 const containerVariants = {
@@ -61,7 +62,7 @@ export default function FriendsBoard() {
         {friendsData.map((friend) => (
           <motion.div key={friend.id} variants={itemVariants} className="h-full">
             <a
-              href={friend.url}
+              href={normalizeUrl(friend.url)}
               target="_blank"
               rel="noopener noreferrer"
               className="block h-full rounded-2xl md:rounded-3xl bg-white/60 dark:bg-slate-800/50 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-lg md:shadow-xl overflow-hidden transition-all duration-500 hover:-translate-y-1 md:hover:-translate-y-2 hover:scale-[1.02] group relative p-3 md:p-6"

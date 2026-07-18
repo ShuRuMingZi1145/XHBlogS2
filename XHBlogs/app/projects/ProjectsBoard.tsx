@@ -2,8 +2,9 @@
 
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import BackButton from '../../components/BackButton'; // 注意层级路径
+import BackButton from '../../components/BackButton';
 import { projectsData } from '../../data/projects';
+import { normalizeUrl } from '../../lib/url';
 
 export default function ProjectsBoard() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -68,7 +69,7 @@ export default function ProjectsBoard() {
               className="h-full"
             >
               <a
-                href={project.githubUrl}
+                href={normalizeUrl(project.githubUrl)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block h-full rounded-3xl bg-white/60 dark:bg-slate-800/50 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-xl overflow-hidden hover:shadow-indigo-500/20 transition-all duration-700 hover:-translate-y-1 group relative p-6 md:p-8"

@@ -1,7 +1,8 @@
 // src/components/ClientSocials.tsx
 "use client";
 
-import { siteConfig } from '../siteConfig'; // 确保路径正确
+import { siteConfig } from '../siteConfig';
+import { normalizeUrl } from '../lib/url'; // 确保路径正确
 
 // 这里我们整合了 SocialBtn 和 ClientSocials
 function SocialBtn({ type, url, onClick }: { type: string, url?: string, onClick?: () => void }) {
@@ -26,7 +27,7 @@ function SocialBtn({ type, url, onClick }: { type: string, url?: string, onClick
       {getIcon()}
     </div>
   );
-  return url ? <a href={url} target="_blank" rel="noopener noreferrer">{content}</a> : content;
+  return url ? <a href={normalizeUrl(url)} target="_blank" rel="noopener noreferrer">{content}</a> : content;
 }
 
 export default function ClientSocials() {

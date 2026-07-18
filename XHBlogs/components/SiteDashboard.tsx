@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 // 🌟 引入咱们的控制中心配置
 import { siteConfig } from '../siteConfig';
+import { normalizeUrl } from '../lib/url';
 
 export default function SiteDashboard() {
   const [timeStr, setTimeStr] = useState('');
@@ -66,7 +67,7 @@ export default function SiteDashboard() {
         {/* 备案信息 (🌟 从 siteConfig 读取链接和名称) */}
         {siteConfig.icpConfig && (
           <a
-            href={siteConfig.icpConfig.link}
+            href={normalizeUrl(siteConfig.icpConfig.link)}
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-indigo-500 transition-colors border-b border-dashed border-slate-400 dark:border-slate-500 pb-0.5"

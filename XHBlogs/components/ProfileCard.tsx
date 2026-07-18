@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { siteConfig } from '../siteConfig';
+import { normalizeUrl } from '../lib/url';
 import { useToast } from './ToastProvider';
 
 export default function ProfileCard({ postCount, chatterCount, photoCount }: { postCount: number, chatterCount: number, photoCount: number }) {
@@ -91,5 +92,5 @@ function SocialBtn({ type, url, onClick }: { type: string, url?: string, onClick
       {getIcon()}
     </div>
   );
-  return url ? <a href={url} target="_blank" rel="noopener noreferrer">{content}</a> : content;
+  return url ? <a href={normalizeUrl(url)} target="_blank" rel="noopener noreferrer">{content}</a> : content;
 }
