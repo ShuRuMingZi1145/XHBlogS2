@@ -53,7 +53,7 @@ export default function Home() {
     slug: c.slug,
     title: c.title || '碎片记录',
     description: c.description || (c.content || '').substring(0, 60),
-    cover: c.cover || 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop',
+    cover: c.cover || 'https://bu.dusays.com/2026/03/24/69c23dc278c78.jpg',
     date: c.date || '1970-01-01',
     formattedDate: formatUpdateTime(c.date || '1970-01-01'),
   })).sort((a, b) => {
