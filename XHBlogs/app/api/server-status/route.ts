@@ -2,7 +2,7 @@
 // 🌟 代理 Glances REST API，避免浏览器跨域问题
 import { NextResponse } from 'next/server';
 
-const GLANCES_HOST = process.env.GLANCES_HOST || 'http://38.76.161.218:2000';
+const GLANCES_HOST = process.env.GLANCES_HOST || 'http://serve.srmz.cn:2012';
 const CACHE_SECONDS = 5;
 
 export const dynamic = 'force-dynamic';
