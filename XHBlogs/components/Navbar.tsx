@@ -80,6 +80,7 @@ export default function Navbar() {
     { name: '杂谈', href: '/chatter' },
     { name: '友链', href: '/friends' },
     { name: '关于', href: '/about' },
+    { name: '服务器状态', href: '/server-status' },
   ];
 
   // 🌟 核心：过滤掉“灵境”，专供手机端使用，保证圆盘自动重新均匀排布
