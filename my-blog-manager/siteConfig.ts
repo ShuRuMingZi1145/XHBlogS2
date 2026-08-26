@@ -3,7 +3,7 @@
 export const siteConfig = {
   // 1. 网站标题与博主信息
   title: "ShuRuMingZi の 宝藏之地",
-  faviconUrl: "https://static.deepseek.com/user-avatar/ne-6Pr4NCgc1rg8IQosHOWRv",
+  faviconUrl: "https://img.cdn1.vip/i/6a884dd67702f_1787317718.webp",
   authorName: "ShuRuMingZi",
   bio: "在代码、学术间穿梭的普通人",
 
@@ -15,14 +15,14 @@ export const siteConfig = {
   navAfter: "宝藏之地",
 
   // 2. 头像设置 (支持网络链接，或将图片放入 public 文件夹后使用 "/me.jpg")
-  avatarUrl: "https://static.deepseek.com/user-avatar/ne-6Pr4NCgc1rg8IQosHOWRv",
+  avatarUrl: "https://img.cdn1.vip/i/6a884dd67702f_1787317718.webp",
 
   // 3. 网站背景设置 (二选一)
   // 如果想用纯图片背景，请在下面 bgImage 写路径，并将 useGradient 设为 false
   useGradient: false,
   themeColors: ["#a18cd1", "#fbc2eb", "#a1c4fd", "#c2e9fb"], // 呼吸流动的颜色组合
 // 修改这里：变成图片数组
-  bgImages: ["https://bu.dusays.com/2026/03/24/69c1e38b4c370.jpg", "https://bu.dusays.com/2026/03/24/69c26fe4acdb5.jpg", "https://bu.dusays.com/2026/03/24/69c26fe4d9486.jpg"],
+  bgImages: ["https://bu.dusays.com/2026/03/24/69c1e38b4c370.jpg", "https://bu.dusays.com/2026/03/24/69c26fe4acdb5.jpg", "https://bu.dusays.com/2026/03/24/69c26fe4d9486.jpg", "https://img.cdn1.vip/i/6a5b996215a71_1784387938.webp"],
 
   // 4. 文章默认封面图 (当 Markdown 没写 cover 时显示)
   defaultPostCover: "https://bu.dusays.com/2026/03/24/69c1e38b346cb.jpg",

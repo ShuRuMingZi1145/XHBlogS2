@@ -244,7 +244,7 @@ async def sync_source_to_github(request: Request):
         if commit_result.returncode != 0:
             return {"success": True, "message": "✅ 本地无新增变更，无需推送。GitHub Actions 会使用上次的构建。"}
 
-        # 4. 推送到 GitHub（GitHub Actions 会自动构建并部署到 Cloudflare Workers）
+        # 4. 推送到 GitHub（GitHub Webhook 会通知 Linux 服务器自动拉取+构建+pm2 reload）
         push_process = subprocess.run(
             f'git push "{https_repo}" HEAD:{source_branch}',
             shell=True, capture_output=True, text=True, encoding='utf-8'
@@ -253,7 +253,7 @@ async def sync_source_to_github(request: Request):
         if push_process.returncode != 0:
             return {"success": False, "message": f"源码同步失败:\n{push_process.stderr}"}
 
-        return {"success": True, "message": "✅ 代码已推送到 GitHub，GitHub Actions 正在自动构建并部署到 Cloudflare Workers…"}
+        return {"success": True, "message": "✅ 代码已推送到 GitHub，Webhook 正在通知 Linux 服务器拉取并部署…"}
 
     except Exception as e:
         return {"success": False, "message": f"部署引擎异常: {str(e)}"}

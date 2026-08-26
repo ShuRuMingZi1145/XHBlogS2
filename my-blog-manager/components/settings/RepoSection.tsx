@@ -208,8 +208,8 @@ export default function RepoSection() {
         return;
       }
 
-      // 3. 推送到 GitHub + 部署到 Cloudflare Workers
-      showToast("☁️ 正在推送源码并部署到 Cloudflare Workers...", "info");
+      // 3. 推送到 GitHub + 触发 Linux 服务器自动部署
+      showToast("☁️ 正在推送源码到 GitHub，触发 Linux 服务器自动部署...", "info");
       const res = await fetch(`${apiBase}/api/deploy/source`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -294,7 +294,7 @@ export default function RepoSection() {
             {/* 🌟 B线：源码同步配置区 */}
             <div className="p-4 bg-blue-500/5 border border-blue-500/20 rounded-2xl mb-6 relative">
               <div className="flex justify-between items-center mb-3">
-                <h4 className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase flex items-center gap-1"><Code size={12}/> B 线：源码托管库 (用于 Vercel 触发)</h4>
+                <h4 className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase flex items-center gap-1"><Code size={12}/> B 线：源码托管库 (用于 Linux 服务器自动部署)</h4>
                 <button onClick={(e) => { e.preventDefault(); handleGetSSH('source'); }} className="flex items-center gap-1 px-3 py-1.5 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-full text-[10px] font-black hover:bg-blue-500 hover:text-white transition-all">
                   <Key size={12} /> 获取 B 线专属密匙
                 </button>
@@ -407,7 +407,7 @@ export default function RepoSection() {
                     <>
                         <div className="w-16 h-16 bg-blue-500/10 rounded-3xl flex items-center justify-center mx-auto mb-6"><CloudUpload className="text-blue-500" size={32} /></div>
                         <h3 className="text-xl font-black text-slate-900 dark:text-white mb-2">一键部署？</h3>
-                        <p className="text-sm text-slate-500 mb-8 leading-relaxed">自动处理待发布任务 → 同步数据到博客目录 → 推送到 GitHub → 部署到 Cloudflare Workers。</p>
+                        <p className="text-sm text-slate-500 mb-8 leading-relaxed">自动处理待发布任务 → 同步数据到博客目录 → 推送到 GitHub → Linux 服务器自动拉取并部署。</p>
                         <div className="flex gap-3">
                             <button onClick={() => setModalConfig({isOpen: false, type: null})} className="flex-1 py-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-2xl text-xs font-black transition-colors hover:bg-slate-200">取消</button>
                             <button onClick={executeUploadSource} className="flex-1 py-4 bg-blue-500 text-white rounded-2xl text-xs font-black shadow-lg shadow-blue-500/30 active:scale-95 transition-all">开始部署</button>

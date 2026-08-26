@@ -408,6 +408,105 @@ Cloudflare Workers 没有文件系统。`fs.readFileSync` / `fs.readdirSync` 在
 
 ---
 
+## 十-E、2026-08-26 会话：从 Cloudflare Workers 迁移到 Linux 服务器自部署
+
+### 目标
+完全脱离 Cloudflare，改用自有 Linux 服务器 + GitHub Webhook 自动部署，访问方式 IP:端口。
+
+### 新架构
+```
+Windows CMS ──git push──► GitHub ──webhook──► Linux 服务器（pm2 守护）
+                                                  │
+                                                  ├─ git fetch + reset
+                                                  ├─ npm ci
+                                                  ├─ npm run build（standalone）
+                                                  └─ pm2 reload xhblog-next
+用户 ──http://服务器IP:4000──► Next.js
+```
+
+### 已完成的修改
+
+1. **`XHBlogs/next.config.ts`** — 加 `output: 'standalone'`，删除 `initOpenNextCloudflareForDev` 调用
+
+2. **删除**：
+   - `XHBlogs/open-next.config.ts`
+   - `XHBlogs/wrangler.toml`
+   - `XHBlogs/public/CNAME`（已废弃）
+   - `XHBlogs/public/_headers`（Cloudflare 专用）
+
+3. **`XHBlogs/package.json`** scripts：
+   - 删 `deploy`（opennext 部署）、`preview`、`pages-deploy`、`upload`、`cf-typegen`
+   - 加 `"start": "cross-env PORT=4000 HOSTNAME=0.0.0.0 node .next/standalone/server.js"`
+   - 加 `"deploy:linux": "bash scripts/deploy-server.sh"`
+
+4. **`XHBlogs/package.json`** devDependencies：
+   - 移除 `@opennextjs/cloudflare`、`wrangler`、`gh-pages`
+   - 加 `cross-env`
+
+5. **`XHBlogs/.gitignore`** — 加 `.next/`、`.open-next/`、`node_modules/`、`.env.production`、`deploy.log`、`server.log`、`server.pid`、`.deploy.lock`
+
+6. **`XHBlogs/scripts/deploy-server.sh`（新建）**：
+   - 上锁防并发（`.deploy.lock`）
+   - 步骤：git fetch + reset → npm ci → npm run build → 拷贝 static/public 到 standalone → pm2 reload
+
+7. **`XHBlogs/scripts/webhook-server.js`（新建）**：
+   - 监听 `:9000`，仅响应 push 到 master 的事件
+   - 校验 `X-Hub-Signature-256`（如果设置了 `WEBHOOK_SECRET`）
+   - 用 `child_process.spawn` 调 `deploy-server.sh`
+   - 防重入（`isDeploying` 标志）
+   - 提供 `GET /health` 健康检查
+
+8. **`XHBlogs/ecosystem.config.cjs`（新建）**：
+- `xhblog-next` 应用：跑 `.next/standalone/server.js`，端口 4000
+    - `xhblog-webhook` 应用：跑 `scripts/webhook-server.js`，端口 9000
+
+9. **`XHBlogs/DEPLOY_LINUX.md`（新建）**：完整部署指南（环境准备、首次部署、GitHub webhook 配置、运维命令、nginx 反代 + HTTPS）
+
+10. **`my-blog-manager/cms_core/api/deploy.py`** — 提示文字从 "Cloudflare Workers" 改为 "Linux 服务器"
+
+11. **`my-blog-manager/components/settings/RepoSection.tsx`** — toast 提示和模态框文案从 "Cloudflare Workers" 改为 "Linux 服务器自动部署"
+
+### 服务器侧首次部署流程
+
+```bash
+# 1. 环境
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs git
+sudo npm i -g pm2 && pm2 startup && pm2 save
+
+# 2. 克隆 + 安装
+cd /opt && sudo git clone https://github.com/ShuRuMingZi1145/XHBlogS2.git xhblog
+cd xhblog/XHBlogs && npm ci && npm run build
+
+# 3. 启动
+pm2 start ecosystem.config.cjs
+pm2 save
+
+# 4. 防火墙放行
+sudo ufw allow 3000/tcp
+sudo ufw allow 9000/tcp   # webhook，可选：仅 GitHub IP 白名单
+```
+
+### GitHub Webhook 配置
+- Payload URL：`http://服务器IP:9000/webhook`
+- Content type：`application/json`
+- Secret：与服务器 `WEBHOOK_SECRET` 一致
+- 事件：只勾 `Push events`
+
+### 端口
+| 端口 | 用途 |
+|------|------|
+| 3000 | Next.js 主站（用户访问） |
+| 9000 | Webhook 接收（仅 GitHub） |
+
+### 注意事项
+- AGENTS.md 提示 Next.js 16 有破坏性变更，但 standalone + Node server 是文档支持的稳定方案
+- 构建产物 `.next/standalone/server.js` 不含 `public/` 和 `.next/static/`，deploy-server.sh 会自动 cp
+- `npm run start` 用了 `cross-env` 以便 Windows 本地调试也能跑（虽然部署只用 Linux）
+- pm2 reload 是 0 停机重启，比 restart 更平滑
+
+---
+
 ## 十、关键命令速查
 
 ```powershell

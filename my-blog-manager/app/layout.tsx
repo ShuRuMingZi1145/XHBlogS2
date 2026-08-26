@@ -16,7 +16,6 @@ import CyberCat from '../components/CyberCat';
 import DanmakuBackground from '../components/DanmakuBackground';
 import GlobalSnow from '../components/GlobalSnow';
 
-// 🌟 1. 引入 Next.js 官方脚本组件
 import Script from 'next/script';
 
 const fontCss = "--font-geist-sans: ui-sans-serif, system-ui, sans-serif; --font-geist-mono: ui-monospace, 'JetBrains Mono', 'Fira Code', monospace; --font-serif: 'Source Han Serif SC', 'Noto Serif SC', 'Songti SC', 'SimSun', serif;";
@@ -31,7 +30,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="zh-CN" className="h-full antialiased" suppressHydrationWarning>
       <head>
-        <style>{`:root { ${fontCss} }`}</style>
+        <style suppressHydrationWarning>{`:root { ${fontCss} }`}</style>
         <style
           suppressHydrationWarning
           dangerouslySetInnerHTML={{
@@ -42,8 +41,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           }}
         />
 
-        {/* 🌟 3. 核心修复：使用 <Script> 组件替代原生 <script> */}
-        {/* strategy="beforeInteractive" 确保脚本在页面交互前执行，防止闪屏 */}
         <Script id="handle-splash-logic" strategy="beforeInteractive">
           {`
             try {

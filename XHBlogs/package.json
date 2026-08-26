@@ -6,13 +6,9 @@
     "prebuild": "node scripts/generate-content-data.mjs",
     "build": "npm run prebuild && next build",
     "dev": "node scripts/generate-content-data.mjs && next dev",
-    "start": "next start",
+    "start": "cross-env PORT=4000 HOSTNAME=0.0.0.0 node .next/standalone/server.js",
     "lint": "eslint",
-    "deploy": "node scripts/generate-content-data.mjs && opennextjs-cloudflare build && opennextjs-cloudflare deploy",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "pages-deploy": "opennextjs-cloudflare build && node -e \"require('fs').copyFileSync('.open-next/worker.js', '.open-next/_worker.js')\"",
-    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
-    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
+    "deploy:linux": "bash scripts/deploy-server.sh"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
@@ -56,18 +52,16 @@
     "unified": "^11.0.5"
   },
   "devDependencies": {
-    "@opennextjs/cloudflare": "^1.19.11",
     "@tailwindcss/postcss": "^4",
     "@tailwindcss/typography": "^0.5.19",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "cross-env": "^7.0.3",
     "esbuild": "^0.28.1",
     "eslint": "^9",
     "eslint-config-next": "16.2.1",
-    "gh-pages": "^6.3.0",
     "tailwindcss": "^4",
-    "typescript": "^5",
-    "wrangler": "^4.103.0"
+    "typescript": "^5"
   }
 }
