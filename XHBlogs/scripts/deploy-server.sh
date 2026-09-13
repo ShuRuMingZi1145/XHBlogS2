@@ -31,8 +31,9 @@ log "[1/5] git fetch + reset 到 origin/$BRANCH ..."
 git fetch origin "$BRANCH" >> "$LOG_FILE" 2>&1
 git reset --hard "origin/$BRANCH" >> "$LOG_FILE" 2>&1
 
-# 2. 安装依赖
+# 2. 安装依赖（使用国内镜像加速）
 log "[2/5] npm ci ..."
+npm config set registry https://registry.npmmirror.com
 npm ci --no-audit --no-fund >> "$LOG_FILE" 2>&1
 
 # 3. 构建（prebuild 自动生成 content-data.ts）
