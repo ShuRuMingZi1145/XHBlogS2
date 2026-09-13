@@ -5,7 +5,7 @@ export const siteConfig = {
   title: "ShuRuMingZi の 宝藏之地",
   faviconUrl: "https://img.cdn1.vip/i/6a884dd67702f_1787317718.webp",
   authorName: "ShuRuMingZi",
-  bio: "在代码、学术间穿梭的普通人",
+  bio: "在代码、学术间穿梭的小南梁",
 
   navTitle: "ShuRuMingZi",
 
