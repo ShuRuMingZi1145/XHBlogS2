@@ -49,6 +49,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                   document.documentElement.classList.add('splash-seen');
                 }
               } catch (e) {}
+              // 兜底：万一 JS chunk 加载失败（部署失败 / 网络故障），
+              // 4 秒后也强制显示内容，避免整站变成一片纯白而看不到故障线索。
+              setTimeout(function () {
+                document.documentElement.classList.add('splash-seen');
+              }, 4000);
             `
           }}
         />
