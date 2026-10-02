@@ -68,6 +68,6 @@ export const siteConfig = {
     maxOutputTokens: 150,
     temperature: 0.85,
   },
-  friendLinkApplyFormat: "名称：ShuRuMingZiの宝藏之地\n简介：今天我也要学习吗\n链接：srmz.cn\n头像：https://static.deepseek.com/user-avatar/ne-6Pr4NCgc1rg8IQosHOWRv",
+  friendLinkApplyFormat: "名称：ShuRuMingZiの宝藏之地\n简介：喵喵喵？\n链接：srmz.cn\n头像：https://static.deepseek.com/user-avatar/ne-6Pr4NCgc1rg8IQosHOWRv",
   enableLevelSystem: true,
 };
