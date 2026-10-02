@@ -11,6 +11,14 @@ export type Project = {
 
 export const projectsData: Project[] = [
   {
+    "id": "proj_1790935658616",
+    "name": "在线邮局",
+    "githubUrl": "email.srmz.cn",
+    "description": "一个可以让你免费使用在线邮箱",
+    "icon": "🪪",
+    "tags": []
+  },
+  {
     "id": "proj_1781955961861",
     "name": "Api Tool",
     "githubUrl": "https://github.com/ShuRuMingZi1145/Api-Tool",
