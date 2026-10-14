@@ -34,7 +34,7 @@ export const siteConfig = {
     github: "https://github.com/ShuRuMingZi1145",
     gitee: "",
     google: "shurumingzi1145@gmail.com",
-    email: "shurumingzi_2012@qq.com",
+    email: "shurumingzi@srmz.cn",
     qq: "3859282287",
     wechat: "shurumingzi_20121105",
   },
